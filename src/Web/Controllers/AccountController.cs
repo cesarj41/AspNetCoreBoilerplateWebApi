@@ -37,6 +37,58 @@ namespace Web.Controllers
             );
         }
 
+        [HttpGet("{userId}/confirm/{code}")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ConfirmEmail(string userId, string code)
+        {
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest(new ErrorDetails(
+                    $"Invalid user Id: '{userId}'."
+                ));
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (! result.Succeeded)
+            {
+                return BadRequest(
+                    new ErrorDetails(result.Errors())
+                );
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("logout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return NoContent();
+        }
+
+        [HttpGet("{email}/[action]")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> ForgotPassword([FromRoute] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                string code = await  _userManager
+                    .GeneratePasswordResetTokenAsync(user);
+
+                // send url to user email with code
+            }
+
+            return NoContent();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -81,31 +133,6 @@ namespace Web.Controllers
             return Ok(user.ToViewModel());
         }
 
-        [HttpGet("{userId}/confirm/{code}")]
-        [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> ConfirmEmail(string userId, string code)
-        {
-            
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return BadRequest(new ErrorDetails(
-                    $"Invalid user Id: '{userId}'."
-                ));
-            }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            if (! result.Succeeded)
-            {
-                return BadRequest(
-                    new ErrorDetails(result.Errors())
-                );
-            }
-
-            return NoContent();
-        }
-
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -137,56 +164,6 @@ namespace Web.Controllers
                 return BadRequest(new ErrorDetails(
                     "Invalid username or password"
                 ));
-            }
-
-            return NoContent();
-        }
-
-        [HttpGet("logout")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return NoContent();
-        }
-
-        [HttpPut("password")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<string>> ChangePassword(
-            ChangeAccountPasswordViewModel model)
-        {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var result = await _userManager.ChangePasswordAsync(
-                user,
-                model.CurrentPassword,
-                model.NewPassword
-            );
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(
-                    new ErrorDetails(result.Errors())
-                );
-            }
-
-            return NoContent();
-        }
-
-        [HttpGet("{email}/[action]")]
-        [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> ForgotPassword([FromRoute] string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user != null)
-            {
-                string code = await  _userManager
-                    .GeneratePasswordResetTokenAsync(user);
-
-                // send url to user email with code
             }
 
             return NoContent();
@@ -227,6 +204,28 @@ namespace Web.Controllers
             return NoContent();        
         }
 
-        
+        [HttpPut("password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<string>> ChangePassword(
+            ChangeAccountPasswordViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(
+                    new ErrorDetails(result.Errors())
+                );
+            }
+
+            return NoContent();
+        }
+
     }
 }
