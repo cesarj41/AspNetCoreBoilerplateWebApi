@@ -14,15 +14,21 @@ You will need the following tools:
 Follow these steps to get your development environment set up:
 
   1. Clone the repository
+  2. Set DbConnection string either on the appsettings.json file or on the os enviroment variables (recommended way).
+
   2. At the root directory, restore projects:
      ```
      dotnet restore
      ```
-  3. Within the `src.Web` directory, run:
+  3. Within the `src.Infrastructure` directory, run database migrations:
+     ```
+     dotnet ef database update
+     ```
+  4. Within the `src.Web` directory, run:
      ```
 	 dotnet run
 	 ```
-  4. Launch [https://localhost:5001/](https://localhost:5001/) in your browser to view the Web UI
+  5. Launch [https://localhost:5001/swagger](https://localhost:5001/swagger) in your browser to view the endpoints.
   
 
 ## Technologies
@@ -32,4 +38,4 @@ Follow these steps to get your development environment set up:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/JasonGT/NorthwindTraders/blob/master/LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/cesarj41/AspNetCoreBoilerplateWebApi/blob/master/LICENSE.md) file for details.
