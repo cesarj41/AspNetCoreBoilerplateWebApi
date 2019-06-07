@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Swashbuckle.AspNetCore.Swagger;
 using Web.ViewModels;
 
 namespace Web.Extensions
@@ -40,10 +39,7 @@ namespace Web.Extensions
         }
         public static void AddSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-            });
+            services.AddSwaggerDocument();
         }
             
         public static void AddDatabase(this IServiceCollection services, string url)

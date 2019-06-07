@@ -89,9 +89,7 @@ namespace Web.Middlewares
         public static void UseSwaggerTools(this IApplicationBuilder app)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(options => {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "My App");
-            });
+            app.UseSwaggerUi3();
         }
 
         public static void UseCustomForwardedHeaders(this IApplicationBuilder app)
