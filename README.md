@@ -1,6 +1,6 @@
 # ASPNET Core WebApi Boilerplate
 
-This is a project boilerplate web api for asp.net core, designed using clean arquitecture, it comes with logging, authentication (signed cookie), swagger, exception and error handling configured and implemented:
+This is a project boilerplate web api for asp.net core, designed using clean arquitecture, it comes with logging (serilog), authentication (signed cookie), swagger, exception and error handling configured and implemented:
 
 ## Getting Started
 Use these instructions to get the project up and running.
